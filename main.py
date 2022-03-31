@@ -1,5 +1,11 @@
+import json
+from gettext import find
+from io import BytesIO
 import telebot  # pyTelegramBotAPI	4.3.1
 from telebot import types
+import requests
+import bs4
+
 
 bot = telebot.TeleBot('5220552349:AAGUwS1OQLApB0Lovm7AWNDK75GKCXNZf3Q')  # Создаем экземпляр бота
 
@@ -44,10 +50,19 @@ def get_text_messages(message):
         bot.send_message(chat_id, text="Развлечения", reply_markup=markup)
 
     elif ms_text == "/dog" or ms_text == "Прислать собаку":  # .........................................................
-        bot.send_message(chat_id, text="еще не готово...")
+        contents = requests.get('https://random.dog/woof.json').json()
+        urlDOG = contents['url']
+        bot.send_photo(chat_id, photo=urlDOG, caption="Вот тебе собачка!!!")
 
     elif ms_text == "Прислать анекдот":  # .............................................................................
-        bot.send_message(chat_id, text="еще не готово...")
+        def get_anekdot():
+            array_anekdots = []
+            req_anek = requests.get('http://anekdotme.ru/random')
+            soup = bs4.BeautifulSoup(req_anek.text, "html.parser")
+            result_find = soup.select('.anekdot_text')
+            for result in result_find:
+                array_anekdots.append(result.getText().strip())
+            return array_anekdots[0]
 
     elif ms_text == "WEB-камера":
         bot.send_message(chat_id, text="еще не готово...")
