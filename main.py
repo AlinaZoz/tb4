@@ -5,6 +5,10 @@ import telebot  # pyTelegramBotAPI	4.3.1
 from telebot import types
 import requests
 import bs4
+import BotGames
+from menuBot import Menu
+import DZ
+
 
 
 bot = telebot.TeleBot('5220552349:AAGUwS1OQLApB0Lovm7AWNDK75GKCXNZf3Q')  # Создаем экземпляр бота
