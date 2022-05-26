@@ -38,18 +38,9 @@ def get_text_messages(bot, cur_user, message):
     elif ms_text == "Википедия":
         bot.send_message(chat_id, 'Отправьте мне любое слово, и я найду его значение на Wikipedia')
 
-    elif ms_text == "Прислать картинку":
+    elif ms_text == "Факт":
+        bot.send_message(chat_id, text=get_fact())
 
-        bot.send_message(chat_id, photo=get_pic())
-
-
-
-
-
-# -----------------------------------------------------------------------
-def get_pic():
-    abs_path_images = 'C:\Users\Алина\PycharmProjects\tb4№2\Новая папка'
-    pic = abs_path_images + random.choice(os.listdir(abs_path_images))
 
 #-------------------------------------------------------------
 def send_film(bot, chat_id):
@@ -87,7 +78,19 @@ def get_dogURL():
         # url.split("/")[-1]
     return url
 #------------------------------------------------------
-
+def get_fact():
+    array_anekdots = []
+    req_anek = requests.get('https://randstuff.ru/fact/random')
+    if req_anek.status_code == 200:
+        soup = bs4.BeautifulSoup(req_anek.text, "html.parser")
+        result_find = soup.select('table', class_='text')
+        for result in result_find:
+            array_anekdots.append(result.getText().strip())
+    if len(array_anekdots) > 0:
+        return array_anekdots[0]
+    else:
+        return ""
+#---------------------------------------------------------------------
 def get_art():
     url = "https://vk.com/album-183412821_281017168"
     art = {}
