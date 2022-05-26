@@ -50,3 +50,10 @@ class film:
         infoFilm["Актёры"] = details[5].contents[1].strip()
         infoFilm["Трейлер_url"] = url + details[6].contents[0]["href"]
         infoFilm["фильм_url"] = url + details[7].contents[0]["href"]
+
+#------------------------------------------------------------------------------
+
+
+
+
+

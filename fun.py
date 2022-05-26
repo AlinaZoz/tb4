@@ -27,8 +27,10 @@ def get_text_messages(bot, cur_user, message):
     elif ms_text == "Угадай кто?":
         get_ManOrNot(bot, chat_id)
 
-    elif ms_text == "Прислать курсы":
-        bot.send_message(chat_id, text=get_cur())
+    elif ms_text == "Цитаты":
+        bot.send_message(chat_id, text=getRandomquot())
+
+
 
 
 
@@ -61,6 +63,20 @@ def get_anekdot():
     else:
         return ""
 
+#----------------------------------------------------------------------------
+def getRandomquot():
+    array_anekdots = []
+    req_anek = requests.get('https://quotes.toscrape.com/random')
+    if req_anek.status_code == 200:
+        soup = bs4.BeautifulSoup(req_anek.text, 'html.parser')
+        quotes = soup.select('span', class_='text')
+
+        for result in quotes:
+            array_anekdots.append(result.getText().strip())
+    if len(array_anekdots) > 0:
+        return array_anekdots[0]
+    else:
+        return ""
 
 # -----------------------------------------------------------------------
 def get_news():
@@ -100,31 +116,17 @@ def get_dogURL():
         # url.split("/")[-1]
     return url
 
-
 # -----------------------------------------------------------------------
-def get_cur_pairs():
-    lst_cur_pairs = []
-    req_currency_list = requests.get(f'https://currate.ru/api/?get=currency_list&key={SECRET.CURRATE_RU}')
-    if req_currency_list.status_code == 200:
-        currency_list_json = req_currency_list.json()
-        for pairs in currency_list_json["data"]:
-            if pairs[3:] == "RUB":
-                lst_cur_pairs.append(pairs)
-    return lst_cur_pairs
+def get_catURL():
+    url = ""
+    req = requests.get('https://mimimi.ru/random')
+    if req.status_code == 200:
+        r_json = req.json()
+        url = r_json['image']
+        # url.split("/")[-1]
+    return url
 
 
-# -----------------------------------------------------------------------
-def get_cur():
-    txt_curses = ""
-    txt_pairs = ",".join(get_cur_pairs())
-    req_currency_rates = requests.get(f'https://currate.ru/api/?get=rates&pairs={txt_pairs}&key={SECRET.CURRATE_RU}')
-    if req_currency_rates.status_code == 200:
-        currency_rates = req_currency_rates.json()
-        for pairs, rates in currency_rates["data"].items():
-            txt_curses += f"{pairs} : {rates}\n"
-    else:
-        txt_curses = req_currency_rates.text
-    return txt_curses
 
 
 # -----------------------------------------------------------------------

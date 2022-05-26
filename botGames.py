@@ -21,7 +21,7 @@ class Card:
     emo_DIAMONDS = "U0002666"  # Unicod эмоджи Буби
 
     def __init__(self, card):
-        if isinstance(card, dict):  # если передали словарь
+        if isinstance(card, dict):
             self.__card_JSON = card
             self.code = card["code"]
             self.suit = card["suit"]
@@ -32,7 +32,7 @@ class Card:
             self.__imagesSVG_URL = card["images"]["svg"]
             # print(self.value, self.suit, self.code)
 
-        elif isinstance(card, str):  # карту передали строкой, в формате "2S"
+        elif isinstance(card, str):
             self.__card_JSON = None
             self.code = card
 
@@ -63,13 +63,13 @@ class Card:
 
             else:
                 if suit == "S":
-                    self.suit = "SPADES"  # Пики
+                    self.suit = "SPADES"
                 elif suit == "C":
-                    self.suit = "CLUBS"  # Крести
+                    self.suit = "CLUBS"
                 elif suit == "H":
-                    self.suit = "HEARTS"  # Черви
+                    self.suit = "HEARTS"
                 elif suit == "D":
-                    self.suit = "DIAMONDS"  # Буби
+                    self.suit = "DIAMONDS"
 
                 self.cost = self.get_cost_card()
                 self.color = self.get_color_card()
@@ -89,13 +89,13 @@ class Card:
             return int(self.value)
 
     def get_color_card(self):
-        if self.suit == "SPADES":  # Пики
+        if self.suit == "SPADES":
             return "BLACK"
-        elif self.suit == "CLUBS":  # Крести
+        elif self.suit == "CLUBS":
             return "BLACK"
-        elif self.suit == "HEARTS":  # Черви
+        elif self.suit == "HEARTS":
             return "RED"
-        elif self.suit == "DIAMONDS":  # Буби
+        elif self.suit == "DIAMONDS":
             return "RED"
 
 # -----------------------------------------------------------------------

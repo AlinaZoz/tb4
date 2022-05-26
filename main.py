@@ -1,11 +1,11 @@
-import telebot  # pyTelegramBotAPI 4.3.1
+import telebot
 from telebot import types
-import botGames  # бот-игры, файл botGames.py
+import botGames
 import menuBot
-from menuBot import Menu  # в этом модуле есть код, создающий экземпляры классов описывающих моё меню
-import DZ  # домашнее задание от первого урока
-import fun  # развлечения
-import speech  # работа с речью
+from menuBot import Menu
+import DZ
+import fun
+
 
 
 bot = telebot.TeleBot('5220552349:AAGUwS1OQLApB0Lovm7AWNDK75GKCXNZf3Q')
@@ -22,7 +22,6 @@ def command(message):
 
 
 # -----------------------------------------------------------------------
-# Получение стикеров от юзера
 @bot.message_handler(content_types=['sticker'])
 def get_messages(message):
     chat_id = message.chat.id
@@ -38,7 +37,6 @@ def get_messages(message):
 
 
 # -----------------------------------------------------------------------
-# Получение аудио от юзера
 @bot.message_handler(content_types=['audio'])
 def get_messages(message):
     chat_id = message.chat.id
@@ -49,7 +47,6 @@ def get_messages(message):
 
 
 # -----------------------------------------------------------------------
-# Получение голосовухи от юзера
 @bot.message_handler(content_types=['voice'])
 def get_messages(message):
     chat_id = message.chat.id
@@ -58,13 +55,9 @@ def get_messages(message):
     voice = message.voice
     # bot.send_message(message.chat.id, voice)
 
-    import speech
-    fileInfo = bot.get_file(voice.file_id)
-    audioData = bot.download_file(fileInfo.file_path)
-    bot.send_message(chat_id, speech.getTextFromVoice(audioData))
+
 
 # -----------------------------------------------------------------------
-# Получение фото от юзера
 @bot.message_handler(content_types=['photo'])
 def get_messages(message):
     chat_id = message.chat.id
@@ -75,7 +68,6 @@ def get_messages(message):
 
 
 # -----------------------------------------------------------------------
-# Получение видео от юзера
 @bot.message_handler(content_types=['video'])
 def get_messages(message):
     chat_id = message.chat.id
@@ -86,7 +78,6 @@ def get_messages(message):
 
 
 # -----------------------------------------------------------------------
-# Получение документов от юзера
 @bot.message_handler(content_types=['document'])
 def get_messages(message):
     chat_id = message.chat.id
@@ -100,7 +91,6 @@ def get_messages(message):
 
 
 # -----------------------------------------------------------------------
-# Получение координат от юзера
 @bot.message_handler(content_types=['location'])
 def get_messages(message):
     chat_id = message.chat.id
@@ -109,14 +99,10 @@ def get_messages(message):
     location = message.location
     bot.send_message(message.chat.id, location)
 
-    from Weather import WeatherFromPyOWN
-    pyOWN = WeatherFromPyOWN()
-    bot.send_message(chat_id, pyOWN.getWeatherAtCoords(location.latitude, location.longitude))
-    bot.send_message(chat_id, pyOWN.getWeatherForecastAtCoords(location.latitude, location.longitude))
+
 
 
 # -----------------------------------------------------------------------
-# Получение контактов от юзера
 @bot.message_handler(content_types=['contact'])
 def get_messages(message):
     chat_id = message.chat.id
@@ -127,7 +113,6 @@ def get_messages(message):
 
 
 # -----------------------------------------------------------------------
-# Получение сообщений от юзера
 @bot.message_handler(content_types=['text'])
 def get_text_messages(message):
     chat_id = message.chat.id
@@ -137,28 +122,27 @@ def get_text_messages(message):
     if cur_user is None:
         cur_user = menuBot.Users(chat_id, message.json["from"])
 
-    # проверка = мы нажали кнопку подменю, или кнопку действия
-    subMenu = menuBot.goto_menu(bot, chat_id, ms_text)  # попытаемся использовать текст как команду меню, и войти в него
+    subMenu = menuBot.goto_menu(bot, chat_id, ms_text)
     if subMenu is not None:
-        # Проверим, нет ли обработчика для самого меню. Если есть - выполним нужные команды
+
         if subMenu.name == "Игра в 21":
-            game21 = botGames.newGame(chat_id, botGames.Game21(jokers_enabled=True))  # создаём новый экземпляр игры
-            text_game = game21.get_cards(2)  # просим 2 карты в начале игры
-            bot.send_media_group(chat_id, media=game21.mediaCards)  # получим и отправим изображения карт
+            game21 = botGames.newGame(chat_id, botGames.Game21(jokers_enabled=True))
+            text_game = game21.get_cards(2)
+            bot.send_media_group(chat_id, media=game21.mediaCards)
             bot.send_message(chat_id, text=text_game)
 
         elif subMenu.name == "Игра КНБ":
-            gameRPS = botGames.newGame(chat_id, botGames.GameRPS())  # создаём новый экземпляр игры и регистрируем его
+            gameRPS = botGames.newGame(chat_id, botGames.GameRPS())
             bot.send_photo(chat_id, photo=gameRPS.url_picRules, caption=gameRPS.text_rules, parse_mode='HTML')
 
-        return  # мы вошли в подменю, и дальнейшая обработка не требуется
+        return
 
-    # проверим, является ли текст текущий команды кнопкой действия
+
     cur_menu = Menu.getCurMenu(chat_id)
-    if cur_menu is not None and ms_text in cur_menu.buttons:  # проверим, что команда относится к текущему меню
+    if cur_menu is not None and ms_text in cur_menu.buttons:
         module = cur_menu.module
 
-        if module != "":  # проверим, есть ли обработчик для этого пункта меню в другом модуле, если да - вызовем его (принцип инкапсуляции)
+        if module != "":
             exec(module + ".get_text_messages(bot, cur_user, message)")
 
         if ms_text == "Помощь":
@@ -172,10 +156,6 @@ def get_text_messages(message):
 # -----------------------------------------------------------------------
 @bot.callback_query_handler(func=lambda call: True)
 def callback_worker(call):
-    # если требуется передать один или несколько параметров в обработчик кнопки,
-    # используйте методы Menu.getExtPar() и Menu.setExtPar()
-    # call.data это callback_data, которую мы указали при объявлении InLine-кнопки
-    # После обработки каждого запроса вызовете метод answer_callback_query(), чтобы Telegram понял, что запрос обработан
     chat_id = call.message.chat.id
     message_id = call.message.id
     cur_user = menuBot.Users.getUser(chat_id)
@@ -188,7 +168,7 @@ def callback_worker(call):
     par = tmp[2] if len(tmp) > 2 else ""
 
     if menu == "GameRPSm":
-        botGames.callback_worker(bot, cur_user, cmd, par, call)  # обработчик кнопок игры находится в модули игры
+        botGames.callback_worker(bot, cur_user, cmd, par, call)
 
 
 # -----------------------------------------------------------------------
@@ -207,4 +187,4 @@ def send_help(bot, chat_id):
 # ---------------------------------------------------------------------
 
 
-bot.polling(none_stop=True, interval=0)  # Запускаем бота
+bot.polling(none_stop=True, interval=0)

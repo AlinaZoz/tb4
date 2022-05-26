@@ -1,4 +1,4 @@
-from pyttsx3 import voice
+
 from telebot import types
 import pickle
 import os
@@ -34,9 +34,9 @@ class KeyboardMenu:
 
 # -----------------------------------------------------------------------
 class Menu:
-    hash = {}  # тут будем накапливать все созданные экземпляры класса
-    cur_menu = {}  # тут будет находиться текущий экземпляр класса, текущее меню для каждого пользователя
-    extendedParameters = {}  # это место хранения дополнительных параметров для передачи в inline кнопки
+    hash = {}
+    cur_menu = {}
+    extendedParameters = {}
     namePickleFile = "bot_curMenu.plk"
 
     # ПЕРЕПИСАТЬ для хранения параметров привязанных к chat_id и названию кнопки
@@ -89,7 +89,6 @@ class Menu:
 
 # -----------------------------------------------------------------------
 def goto_menu(bot, chat_id, name_menu):
-    # получение нужного элемента меню
     cur_menu = Menu.getCurMenu(chat_id)
     if name_menu == "Выход" and cur_menu != None and cur_menu.parent != None:
         target_menu = Menu.getMenu(chat_id, cur_menu.parent.name)
@@ -109,53 +108,9 @@ m_games = Menu("Игры", buttons=["Игра КНБ", "Игра КНБ-MP", "И
 m_game_21 = Menu("Игра в 21", buttons=["Карту!", "Стоп!", "Выход"], parent=m_games, module="botGames")
 m_game_rsp = Menu("Игра КНБ", buttons=["Камень", "Ножницы", "Бумага", "Выход"], parent=m_games, module="botGames")
 m_DZ = Menu("ДЗ", buttons=["Задание-1", "Задание-2", "Задание-3", "Задание-4", "Задание-5", "Задание-6", "Выход"], parent=m_main, module="DZ")
-m_fun = Menu("Развлечения", buttons=["Прислать собаку", "Прислать лису", "Прислать анекдот",  "Прислать новости", "Прислать фильм", "Прислать курсы", "Угадай кто?", "Выход"], parent=m_main, module="fun")
-m_voice = Menu("Голос!", buttons=["Текущее время", "Произнеси текст", "Главные новости", "Прогноз погоды", "Выход"], parent=m_main, module="speech")
-# m_fun = Menu("Развлечения", buttons=[["Прислать собаку", "Прислать лису"], ["Прислать анекдот", "Прислать фильм"], ["Выход"]], parent=m_main)
+m_fun = Menu("Развлечения", buttons=["Прислать собаку", "Прислать лису", "Прислать анекдот",  "Прислать фильм", "Угадай кто?", "Цитаты", "Выход"], parent=m_main, module="fun")
+m_photo = Menu("Фото",)
+
 
 Menu.loadCurMenu()
 
-# import main
-# import DZ
-#
-# b_exit = KeyboardMenu("Выход")
-#
-# b_fun = KeyboardMenu("Развлечения")
-# b_game = KeyboardMenu("Игры")
-# b_dz = KeyboardMenu("ДЗ")
-# b_help = KeyboardMenu("Помощь", main.send_help)
-# m_main = Menu("Главное меню", buttons=[b_fun, b_game, b_dz, b_help])
-#
-# b_dz1 = KeyboardMenu("Задание-1", DZ.dz1)
-# b_dz2 = KeyboardMenu("Задание-2", DZ.dz2)
-# b_dz3 = KeyboardMenu("Задание-3", DZ.dz3)
-# b_dz4 = KeyboardMenu("Задание-4", DZ.dz4)
-# b_dz5 = KeyboardMenu("Задание-5", DZ.dz5)
-# b_dz6 = KeyboardMenu("Задание-6", DZ.dz6)
-#
-# m_DZ = Menu(b_dz, buttons=[b_dz1, b_dz2, b_dz3, b_dz4, b_dz5, b_dz6, b_exit], parent=m_main)
-#
-# menu_json = {
-#     "name": "Главное меню",
-#     "handler": "",
-#     "buttons": [
-#         {
-#             "name": "Развлечения",
-#             "handler": "",
-#         },
-#         {
-#             "name": "Игры",
-#             "handler": "",
-#         },
-#         {
-#             "name": "ДЗ",
-#             "handler": "",
-#         },
-#         {
-#             "name": "Помощь",
-#             "handler": "main.send_help",
-#         }
-#     ]
-# }
-
-# второй вариант - меню через ini-файл

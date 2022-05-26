@@ -30,7 +30,7 @@ def my_inputInt(bot, chat_id, txt, ResponseHandler):
 
     message = bot.send_message(chat_id, text=txt)
     bot.register_next_step_handler(message, my_inputInt_SecondPart, botQuestion=bot, txtQuestion=txt, ResponseHandler=ResponseHandler)
-    # bot.register_next_step_handler(message, my_inputInt_return, bot, txt, ResponseHandler)  # то-же самое, но короче
+    # bot.register_next_step_handler(message, my_inputInt_return, bot, txt, ResponseHandler)
 
 def my_inputInt_SecondPart(message, botQuestion, txtQuestion, ResponseHandler):
     chat_id = message.chat.id
@@ -38,7 +38,7 @@ def my_inputInt_SecondPart(message, botQuestion, txtQuestion, ResponseHandler):
         if message.content_type != "text":
             raise ValueError
         var_int = int(message.text)
-        # данные корректно преобразовались в int, можно вызвать обработчик ответа, и передать туда наше число
+
         ResponseHandler(botQuestion, chat_id, var_int)
     except ValueError:
         botQuestion.send_message(chat_id,
