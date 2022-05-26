@@ -39,16 +39,16 @@ class Menu:
     extendedParameters = {}
     namePickleFile = "bot_curMenu.plk"
 
-    # ПЕРЕПИСАТЬ для хранения параметров привязанных к chat_id и названию кнопки
+
     def __init__(self, name, buttons=None, parent=None, module=""):
         self.parent = parent
         self.module = module
         self.name = name
         self.buttons = buttons
         markup = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=4)
-        markup.add(*buttons)  # Обратите внимание - звёздочка используется для распаковки списка
+        markup.add(*buttons)
         self.markup = markup
-        self.__class__.hash[name] = self  # в классе содержится словарь, со всеми экземплярами класса, обновим его
+        self.__class__.hash[name] = self
 
     @classmethod
     def getExtPar(cls, id):
@@ -103,13 +103,13 @@ def goto_menu(bot, chat_id, name_menu):
 
 
 # -----------------------------------------------------------------------
-m_main = Menu("Главное меню", buttons=["Развлечения", "Игры", "ДЗ", "Голос!", "Помощь"])
+m_main = Menu("Главное меню", buttons=["Развлечения", "Игры", "ДЗ", "Фото", "Помощь"])
 m_games = Menu("Игры", buttons=["Игра КНБ", "Игра КНБ-MP", "Игра в 21", "Выход"], module="botGames", parent=m_main)
 m_game_21 = Menu("Игра в 21", buttons=["Карту!", "Стоп!", "Выход"], parent=m_games, module="botGames")
 m_game_rsp = Menu("Игра КНБ", buttons=["Камень", "Ножницы", "Бумага", "Выход"], parent=m_games, module="botGames")
 m_DZ = Menu("ДЗ", buttons=["Задание-1", "Задание-2", "Задание-3", "Задание-4", "Задание-5", "Задание-6", "Выход"], parent=m_main, module="DZ")
-m_fun = Menu("Развлечения", buttons=["Прислать собаку", "Прислать лису", "Прислать анекдот",  "Прислать фильм", "Угадай кто?", "Цитаты", "Выход"], parent=m_main, module="fun")
-m_photo = Menu("Фото",)
+m_fun = Menu("Развлечения", [ "Прислать анекдот",  "Прислать фильм", "Угадай кто?", "Цитаты","Википедия", "Выход"], parent=m_main, module="fun")
+m_photo = Menu("Фото", ["Прислать собаку", "Прислать лису","Прислать рисунок","Прислать картинку", "Выход"], parent=m_main, module="fun")
 
 
 Menu.loadCurMenu()

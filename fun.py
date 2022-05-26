@@ -1,7 +1,12 @@
+import os
+import re
 import requests
 import bs4  # BeautifulSoup4
 from telebot import types
 from io import BytesIO
+import wikipedia
+import random
+
 
 
 # -----------------------------------------------------------------------
@@ -15,11 +20,11 @@ def get_text_messages(bot, cur_user, message):
     elif ms_text == "Прислать лису":
         bot.send_photo(chat_id, photo=get_foxURL(), caption="Вот тебе лисичка!")
 
+    elif ms_text == "Прислать рисунок":
+        bot.send_photo(chat_id, photo=get_art(), caption="Вот тебе рисунок!")
+
     elif ms_text == "Прислать анекдот":
         bot.send_message(chat_id, text=get_anekdot())
-
-    elif ms_text == "Прислать новости":
-        bot.send_message(chat_id, text=get_news())
 
     elif ms_text == "Прислать фильм":
         send_film(bot, chat_id)
@@ -30,11 +35,23 @@ def get_text_messages(bot, cur_user, message):
     elif ms_text == "Цитаты":
         bot.send_message(chat_id, text=getRandomquot())
 
+    elif ms_text == "Википедия":
+        bot.send_message(chat_id, 'Отправьте мне любое слово, и я найду его значение на Wikipedia')
+
+    elif ms_text == "Прислать картинку":
+
+        bot.send_message(chat_id, photo=get_pic())
+
 
 
 
 
 # -----------------------------------------------------------------------
+def get_pic():
+    abs_path_images = 'C:\Users\Алина\PycharmProjects\tb4№2\Новая папка'
+    pic = abs_path_images + random.choice(os.listdir(abs_path_images))
+
+#-------------------------------------------------------------
 def send_film(bot, chat_id):
     film = get_randomFilm()
     info_str = f"<b>{film['Наименование']}</b>\n" \
@@ -50,6 +67,43 @@ def send_film(bot, chat_id):
 
 
 # -----------------------------------------------------------------------
+def get_foxURL():
+    url = ""
+    req = requests.get('https://randomfox.ca/floof/')
+    if req.status_code == 200:
+        r_json = req.json()
+        url = r_json['image']
+        # url.split("/")[-1]
+    return url
+
+
+# -----------------------------------------------------------------------
+def get_dogURL():
+    url = ""
+    req = requests.get('https://random.dog/woof.json')
+    if req.status_code == 200:
+        r_json = req.json()
+        url = r_json['url']
+        # url.split("/")[-1]
+    return url
+#------------------------------------------------------
+
+def get_art():
+    url = "https://vk.com/album-183412821_281017168"
+    art = {}
+    req_art = requests.get(url)
+    if req_art.status_code == 200:
+        soup = bs4.BeautifulSoup(req_art.text, "html.parser")
+        result_find = soup.find('div', id='photo_row_', class_="photos_row ", style='background-image')
+        images = []
+        for img in result_find.findAll('img'):
+            images.append(url + img.get('src'))
+        art["art"] = images[0]
+
+    return art
+
+
+#--------------------------------------------------------
 def get_anekdot():
     array_anekdots = []
     req_anek = requests.get('http://anekdotme.ru/random')
@@ -79,57 +133,37 @@ def getRandomquot():
         return ""
 
 # -----------------------------------------------------------------------
-def get_news():
-    array_anekdots = []
-    req_anek = requests.get('https://www.banki.ru/news/lenta')
-    if req_anek.status_code == 200:
-        soup = bs4.BeautifulSoup(req_anek.text, "html.parser")
-        result_find = soup.select('.doFpcq')
-        for result in result_find:
-            print(result)
 
-            # array_anekdots.append(result.getText().strip())
-    if len(array_anekdots) > 0:
-        return array_anekdots[0]
-    else:
-        return ""
+def getwiki():
+    wikipedia.set_lang("ru")
+    try:
+        page = wikipedia.page()
+        wikitext = page.content[:1000]
+        wikimas = wikitext.split('.')
+        wikimas = wikimas[:-1]
+        wikitext2 = ''
+        for x in wikimas:
+            if not('==' in x):
+                if (len((x.strip()))>3):
+                    wikitext2=wikitext2+x+''
+            else:
+                break
 
+        wikitext2=re.sub('\([^()]*\)', '', wikitext2)
+        wikitext2 = re.sub('\([^()]*\)', '', wikitext2)
+        wikitext2 = re.sub('\{[^\{\}]*\}', '', wikitext2)
 
-# -----------------------------------------------------------------------
-def get_foxURL():
-    url = ""
-    req = requests.get('https://randomfox.ca/floof/')
-    if req.status_code == 200:
-        r_json = req.json()
-        url = r_json['image']
-        # url.split("/")[-1]
-    return url
+        return wikitext2
 
-
-# -----------------------------------------------------------------------
-def get_dogURL():
-    url = ""
-    req = requests.get('https://random.dog/woof.json')
-    if req.status_code == 200:
-        r_json = req.json()
-        url = r_json['url']
-        # url.split("/")[-1]
-    return url
-
-# -----------------------------------------------------------------------
-def get_catURL():
-    url = ""
-    req = requests.get('https://mimimi.ru/random')
-    if req.status_code == 200:
-        r_json = req.json()
-        url = r_json['image']
-        # url.split("/")[-1]
-    return url
+    except Exception as e:
+        return 'В энциклопедии нет информации об этом'
 
 
 
 
-# -----------------------------------------------------------------------
+
+
+#-----------------------------------------------------------------------
 def get_ManOrNot(bot, chat_id):
 
     markup = types.InlineKeyboardMarkup()

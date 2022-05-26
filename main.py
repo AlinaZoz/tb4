@@ -8,6 +8,7 @@ import fun
 
 
 
+
 bot = telebot.TeleBot('5220552349:AAGUwS1OQLApB0Lovm7AWNDK75GKCXNZf3Q')
 
 
@@ -122,6 +123,8 @@ def get_text_messages(message):
     if cur_user is None:
         cur_user = menuBot.Users(chat_id, message.json["from"])
 
+
+
     subMenu = menuBot.goto_menu(bot, chat_id, ms_text)
     if subMenu is not None:
 
@@ -134,6 +137,12 @@ def get_text_messages(message):
         elif subMenu.name == "Игра КНБ":
             gameRPS = botGames.newGame(chat_id, botGames.GameRPS())
             bot.send_photo(chat_id, photo=gameRPS.url_picRules, caption=gameRPS.text_rules, parse_mode='HTML')
+
+        elif subMenu.name == "Википедия":
+            bot.send_message(chat_id,  text=fun.getwiki())
+
+
+
 
         return
 
@@ -188,3 +197,4 @@ def send_help(bot, chat_id):
 
 
 bot.polling(none_stop=True, interval=0)
+
