@@ -186,8 +186,6 @@ def send_help(bot, chat_id):
     markup = types.InlineKeyboardMarkup()
     btn1 = types.InlineKeyboardButton(text="Напишите автору", url="https://t.me/user59387")
     markup.add(btn1)
-    img = open('Швец Андрей.png', 'rb')
-    bot.send_photo(chat_id, img, reply_markup=markup)
 
     bot.send_message(chat_id, "Активные пользователи чат-бота:")
     for el in menuBot.Users.activeUsers:

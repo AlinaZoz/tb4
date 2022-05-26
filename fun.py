@@ -1,11 +1,11 @@
-import os
+
 import re
 import requests
 import bs4  # BeautifulSoup4
 from telebot import types
 from io import BytesIO
 import wikipedia
-import random
+
 
 
 
@@ -40,6 +40,9 @@ def get_text_messages(bot, cur_user, message):
 
     elif ms_text == "Факт":
         bot.send_message(chat_id, text=get_fact())
+
+    elif ms_text == "Мем":
+        bot.send_photo(chat_id, photo=get_meme())
 
 
 #-------------------------------------------------------------
@@ -76,6 +79,20 @@ def get_dogURL():
         r_json = req.json()
         url = r_json['url']
         # url.split("/")[-1]
+    return url
+#----------------------------------------------------
+def get_meme():
+    url = ""
+    req = requests.get('https://dtf.ru/kek/entries/new')
+    if req.status_code == 200:
+        soup = bs4.BeautifulSoup(req.content, "html.parser")
+        result_find = soup.find('div', class_='content-image')
+        result_find2 = result_find.find('div', class_='andropov_image')
+        list = open("list.txt", "w+")
+        link = (result_find2['data-image-src'])
+        if link not in list:
+            with open("list.txt", "w") as file:
+                file.write(link)
     return url
 #------------------------------------------------------
 def get_fact():
