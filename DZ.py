@@ -36,7 +36,7 @@ def input_age(bot, chat_id):
 
 def dz5_ResponseHandler(bot, chat_id, age_int):
     bot.send_message(chat_id,
-                     text=f"О! тебе уже {age_int}! \nА через год будет уже {age_int + 1}!!!\n" + ageCalc(age_int))
+                     text=f"Ого! тебе уже {age_int}! \nА через год будет уже {age_int + 1}!!!\n" + ageCalc(age_int))
 
 
 def ageCalc(age):
@@ -57,7 +57,6 @@ def my_inputInt(bot, chat_id, txt, ResponseHandler):
     message = bot.send_message(chat_id, text=txt)
     bot.register_next_step_handler(message, my_inputInt_SecondPart, botQuestion=bot, txtQuestion=txt,
                                    ResponseHandler=ResponseHandler)
-    # bot.register_next_step_handler(message, my_inputInt_return, bot, txt, ResponseHandler)  # то-же самое, но короче
 
 
 def my_inputInt_SecondPart(message, botQuestion, txtQuestion, ResponseHandler):

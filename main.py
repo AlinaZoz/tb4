@@ -138,8 +138,7 @@ def get_text_messages(message):
             gameRPS = botGames.newGame(chat_id, botGames.GameRPS())
             bot.send_photo(chat_id, photo=gameRPS.url_picRules, caption=gameRPS.text_rules, parse_mode='HTML')
 
-        elif subMenu.name == "Википедия":
-            bot.send_message(chat_id,  text=fun.getwiki())
+
 
 
 
