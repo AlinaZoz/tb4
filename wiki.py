@@ -11,15 +11,14 @@ def get_text_messages(bot, cur_user, message):
         bot.send_message(chat_id, 'Отправьте мне любое слово, и я найду его значение на Wikipedia')
         input_w(bot, chat_id)
 
+def input_w(bot, chat_id):
+    ResponseHandler = lambda message: bot.send_message(chat_id,get_wiki(message.text))
+
+    my_input(bot, chat_id,ResponseHandler)
+
 def my_input(bot, chat_id, txt, ResponseHandler):
     message = bot.send_message(chat_id, text=txt)
     bot.register_next_step_handler(message, ResponseHandler)
-
-def  input_w(bot, chat_id, ResponseHandler):
-    my_input(bot, chat_id, get_wiki)
-
-
-
 
 
 def get_wiki(bot, chat_id):
@@ -36,7 +35,7 @@ def get_wiki(bot, chat_id):
                 else:
                     break
 
-            wikitext2=re.sub('\([^()]*\)', '', wikitext2)
+            wikitext2 = re.sub('\([^()]*\)', '', wikitext2)
             wikitext2 = re.sub('\([^()]*\)', '', wikitext2)
             wikitext2 = re.sub('\{[^\{\}]*\}', '', wikitext2)
 
@@ -46,5 +45,3 @@ def get_wiki(bot, chat_id):
             return 'В энциклопедии нет информации об этом'
 
 
-def ResponseHandler(bot, chat_id, ):
-    bot.send_message(chat_id, text=get_wiki)

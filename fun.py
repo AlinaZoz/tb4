@@ -83,19 +83,37 @@ def get_dogURL():
     return url
 #----------------------------------------------------
 def get_meme():
-    infoFilm = {}
     url = ""
-    req = 'https://dtf.ru/kek/entries/new'
-    if req.status_code == 200:
-        response = requests.get(req, headers={'User-Agent': UserAgent().chrome})
-        soup = bs4.BeautifulSoup(response.content, 'html.parser')
-        result_find = soup.find('div', attrs={'class': 'content-image'})
-        result_find2 = result_find.find('div', attrs={'class': 'andropov_image'})
-        images = []
-        for img in result_find2.findAll('image'):
-            images.append(img.get('data-image-src'))
-        infoFilm["meme"] = images[0]
+    images = []
+    page_link = 'https://knowyourmeme.com/random'.format(get_meme)
+    response = requests.get(page_link, headers={'User-Agent': UserAgent().chrome})
+
+    if page_link.status_code == 200:
+        html = response.content
+        soup = bs4.BeautifulSoup(html, 'html.parser')
+
+        meme_links = soup.findAll(lambda tag: tag.name == 'a' and tag.get('class') == ['photo'])
+        meme_links = ['http://knowyourmeme.com' + link.attrs['href'] for link in meme_links]
+        for img in meme_links:
+            images.append(img.get('src'))
+
+
     return url
+
+    # infoFilm = {}
+    # url = ""
+    # req = 'https://dtf.ru/kek/entries/new'
+    # if req.status_code == 200:
+    #     response = requests.get(req, headers={'User-Agent': UserAgent().chrome})
+    #     soup = bs4.BeautifulSoup(response.content, 'html.parser')
+    #     result_find = soup.find('div', attrs={'class': 'content-image'})
+    #     result_find2 = result_find.find('div', attrs={'class': 'andropov_image'})
+    #     images = []
+    #     for img in result_find2.findAll('img'):
+    #         images.append(img.get('src'))
+    #     infoFilm["meme"] = images[0]
+    # return infoFilm
+
 
     # url = ""
     # req = requests.get('https://dtf.ru/kek/entries/new')
@@ -108,7 +126,7 @@ def get_meme():
     #     bs = soup.find('div', class_='content-image')
     #     bs2 = bs.find('div', class_='andropov_image')
     #     list = open("list.txt", "w+")
-    #     link = (bs2['data-image-src'])  # Сам парсер мемов
+    #     link = (bs2['src'])  # Сам парсер мемов
     #
     #     with open("list.txt", "w") as file:
     #         file.write(link)
@@ -134,14 +152,15 @@ def get_fact():
 #     req_art = requests.get(url)
 #     if req_art.status_code == 200:
 #         soup = bs4.BeautifulSoup(req_art.text, "html.parser")
-#         result_find = soup.find('div', id='photo_row_', class_="photos_row ", style='background-image')
+#         result_find = soup.find('div', class_="photos_row")
+#         result_find2 = soup.find('div', style="background-image")
 #         images = []
-#         for img in result_find.findAll('img'):
+#         for img in result_find2.findAll('img'):
 #             images.append(url + img.get('src'))
-#         art["art"] = images[0]
+#         art["result_find2"] = images[0]
 #
 #     return art
-
+#
 
 #--------------------------------------------------------
 def get_anekdot():
@@ -173,8 +192,6 @@ def getRandomquot():
         return ""
 
 # -----------------------------------------------------------------------
-
-
 
 
 
