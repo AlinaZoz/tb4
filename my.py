@@ -7,7 +7,7 @@ def get_text_messages(bot, cur_user, message):
     chat_id = message.chat.id
     ms_text = message.text
 
-    if ms_text == "Википедия":
+    if ms_text == "найти значение":
         bot.send_message(chat_id, 'Отправьте мне любое слово, и я найду его значение на Wikipedia')
         input_w(bot, chat_id)
 

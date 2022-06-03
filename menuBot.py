@@ -1,4 +1,5 @@
-
+# import buttons as buttons
+from pyttsx3 import voice
 from telebot import types
 import pickle
 import os
@@ -34,21 +35,21 @@ class KeyboardMenu:
 
 # -----------------------------------------------------------------------
 class Menu:
-    hash = {}
-    cur_menu = {}
-    extendedParameters = {}
+    hash = {}  # тут будем накапливать все созданные экземпляры класса
+    cur_menu = {}  # тут будет находиться текущий экземпляр класса, текущее меню для каждого пользователя
+    extendedParameters = {}  # это место хранения дополнительных параметров для передачи в inline кнопки
     namePickleFile = "bot_curMenu.plk"
 
-
+    # ПЕРЕПИСАТЬ для хранения параметров привязанных к chat_id и названию кнопки
     def __init__(self, name, buttons=None, parent=None, module=""):
         self.parent = parent
         self.module = module
         self.name = name
         self.buttons = buttons
         markup = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=4)
-        markup.add(*buttons)
+        markup.add(*buttons)  # Обратите внимание - звёздочка используется для распаковки списка
         self.markup = markup
-        self.__class__.hash[name] = self
+        self.__class__.hash[name] = self  # в классе содержится словарь, со всеми экземплярами класса, обновим его
 
     @classmethod
     def getExtPar(cls, id):
@@ -89,6 +90,7 @@ class Menu:
 
 # -----------------------------------------------------------------------
 def goto_menu(bot, chat_id, name_menu):
+    # получение нужного элемента меню
     cur_menu = Menu.getCurMenu(chat_id)
     if name_menu == "Выход" and cur_menu != None and cur_menu.parent != None:
         target_menu = Menu.getMenu(chat_id, cur_menu.parent.name)
@@ -103,14 +105,15 @@ def goto_menu(bot, chat_id, name_menu):
 
 
 # -----------------------------------------------------------------------
-m_main = Menu("Главное меню", buttons=["Развлечения", "Игры", "ДЗ", "Фото",  "Помощь"])
-m_games = Menu("Игры", buttons=["Игра КНБ", "Игра КНБ-MP", "Игра в 21", "Выход"], module="botGames", parent=m_main)
+m_main = Menu("Главное меню", buttons=["Развлечения", "Игры", "ДЗ", "Фото", "Википедия", "Помощь"])
+m_games = Menu("Игры", buttons=["Игра КНБ", "Игра КНБ-MP", "Русская рулетка", "Игра в 21", "Выход"], module="botGames", parent=m_main)
+m_games_RusR = Menu("Игры", buttons=["1", "2", "3", "4", "5", "6" , "Выход"], parent=m_games, module="botGames")
 m_game_21 = Menu("Игра в 21", buttons=["Карту!", "Стоп!", "Выход"], parent=m_games, module="botGames")
 m_game_rsp = Menu("Игра КНБ", buttons=["Камень", "Ножницы", "Бумага", "Выход"], parent=m_games, module="botGames")
 m_DZ = Menu("ДЗ", buttons=["Ввод имени", "Ввод возраста", "Задача", "Выход"], parent=m_main, module="DZ")
 m_fun = Menu("Развлечения", [ "Прислать анекдот", "Википедия", "Прислать фильм",  "Угадай кто?","Факт","Мем", "Цитаты", "Выход"], parent=m_main, module="fun")
 m_photo = Menu("Фото", ["Прислать собаку", "Прислать лису","Прислать рисунок", "Выход"], parent=m_main, module="fun")
-
+m_wiki = Menu("Википедия", ["найти значение", "Выход"], parent=m_main, module="my")
 
 Menu.loadCurMenu()
 
